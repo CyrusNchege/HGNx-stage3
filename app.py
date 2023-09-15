@@ -38,16 +38,12 @@ def get_one(id):
     person = Person.query.get(id)
     return jsonify(person.to_json())
 
-@app.route('/api', methods=['POST'])
+@app.route('/api/', methods=['POST'])
 def create_person():
-    person_data = json.loads(request.data)
-
-    person = Person(name=person_data['name'], age=person_data['age'])
+    person = Person(name=request.json['name'], age=request.json['age'])
     db.session.add(person)
     db.session.commit()
-
     return jsonify(person.to_json())
-    
 
 
 
