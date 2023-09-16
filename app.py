@@ -2,10 +2,18 @@ from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
 import json
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///person.db'
+
+db_uri = os.getenv('db_uri')
+app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+
 
 db = SQLAlchemy(app)
 
