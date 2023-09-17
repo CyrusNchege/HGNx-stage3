@@ -3,7 +3,7 @@ blinker==1.6.2
 click==8.1.7
 Flask==2.0.0
 Flask-RESTful==0.3.9
-Flask-SQLAlchemy==2.5.0
+Flask-SQLAlchemy==2.5.1
 greenlet==2.0.2
 itsdangerous==2.1.2
 Jinja2==3.1.2
@@ -13,7 +13,7 @@ protobuf==3.20.3
 python-dotenv== 0.21.1
 pytz==2023.3.post1
 six==1.16.0
-SQLAlchemy==2.0.20
+SQLAlchemy==1.4.23
 typing_extensions==4.7.1
 Werkzeug==2.1.0
 gunicorn==21.2.0
