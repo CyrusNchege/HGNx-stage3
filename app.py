@@ -34,7 +34,7 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    return 'Hello World'
+    return 'Hello you! are you looking for /api?'
 
 @app.route('/api', methods=['GET'])
 def get_all():
