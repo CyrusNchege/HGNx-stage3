@@ -57,18 +57,44 @@ def create_person():
 
 @app.route('/api/<int:id>', methods=['PUT'])
 def update(id):
-    person = Person.query.get(id)
-    person.name = request.json['name']
-    person.age = request.json['age']
-    db.session.commit()
-    return jsonify(person.to_json())
+    try:
+        person = Person.query.get(id)
+
+        if person is None:
+            return jsonify({'error': 'Person not found'}), 404
+
+        # Validate the request data
+        if 'name' in request.json:
+            person.name = request.json['name']
+        if 'age' in request.json:
+            person.age = request.json['age']
+
+        db.session.commit()
+
+        return jsonify({'message': 'Person updated successfully', 'person': person.to_json()})
+
+    except Exception as e:
+        db.session.rollback()  
+        return jsonify({'error': str(e)}), 500  
+
 
 @app.route('/api/<int:id>', methods=['DELETE'])
 def delete(id):
-    person = Person.query.get(id)
-    db.session.delete(person)
-    db.session.commit()
-    return jsonify(person.to_json())
+    try:
+        person = Person.query.get(id)
+
+        if person is None:
+            return jsonify({'error': 'Person not found'}), 404
+
+        db.session.delete(person)
+        db.session.commit()
+        
+        return jsonify({'message': 'Person deleted successfully'})
+
+    except Exception as e:
+        db.session.rollback()  
+        return jsonify({'error': str(e)}), 500  
+
 
 
 if __name__ == '__main__':
