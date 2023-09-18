@@ -44,16 +44,22 @@ def get_all():
 @app.route('/api/<int:id>', methods=['GET'])
 def get_one(id):
     person = Person.query.get(id)
-    return jsonify(person.to_json())
+    if person:
+        return jsonify(person.to_json())
+    else:
+        return jsonify({'error': 'Person not found'}), 404
 
-@app.route('/api/', methods=['POST'])
+@app.route('/api', methods=['POST'])
 def create_person():
-    person = Person(name=request.json['name'], age=request.json['age'])
-    db.session.add(person)
-    db.session.commit()
-    return jsonify(person.to_json())
-
-
+    try:
+        data = request.get_json()
+        person = Person(name=data['name'], age=data.get('age'))
+        db.session.add(person)
+        db.session.commit()
+        return jsonify({'message': 'Person created successfully', 'person': person.to_json()}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/<int:id>', methods=['PUT'])
 def update(id):
@@ -63,20 +69,19 @@ def update(id):
         if person is None:
             return jsonify({'error': 'Person not found'}), 404
 
-        # Validate the request data
-        if 'name' in request.json:
-            person.name = request.json['name']
-        if 'age' in request.json:
-            person.age = request.json['age']
+        data = request.get_json()
+        if 'name' in data:
+            person.name = data['name']
+        if 'age' in data:
+            person.age = data['age']
 
         db.session.commit()
 
         return jsonify({'message': 'Person updated successfully', 'person': person.to_json()})
 
     except Exception as e:
-        db.session.rollback()  
-        return jsonify({'error': str(e)}), 500  
-
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/<int:id>', methods=['DELETE'])
 def delete(id):
@@ -88,12 +93,15 @@ def delete(id):
 
         db.session.delete(person)
         db.session.commit()
-        
+
         return jsonify({'message': 'Person deleted successfully'})
 
     except Exception as e:
-        db.session.rollback()  
-        return jsonify({'error': str(e)}), 500  
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True) 
 
 
 
